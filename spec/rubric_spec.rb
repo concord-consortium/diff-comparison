@@ -28,6 +28,19 @@ describe Diff::Comparison::Rubric do
     expect(r.currentScore).to eq(24)
   end
 
+  it 'should allow the user to reset the current score to the starting score' do
+    r = Rubric.new(nil, 20)
+    r.applyRule([], :added)
+    expect(r.currentScore).to eq(21)
+    r.applyRule([:foo, :bar], :changed, 49)
+    expect(r.currentScore).to eq(22)
+    r.applyRule([:bar], :deleted)
+    expect(r.currentScore).to eq(23)
+    r.reset
+    r.applyRule([:some, :sub, :attr], :changed, 30)
+    expect(r.currentScore).to eq(21)
+  end
+
   it 'should apply the correct rule based on the path' do
     r = Rubric.new({
       :a => RR.new({:__default__ => lambda {|c,s| return c+2 }}),

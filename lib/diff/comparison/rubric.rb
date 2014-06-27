@@ -20,9 +20,14 @@ module Diff
       # You can also define a default rubric rule which will be used when a rule for the corresponding path
       # is not found
       #   r = { :__default__ => RubricRule.new(...), :a => { :__default__ => RubricRule.new(...), :aa => RubricRule.new(...) } }
-      def initialize(rubric = nil, currentScore = 0)
+      def initialize(rubric = nil, initialScore = 0)
         @rubric = rubric || { :__default__ => RubricRule.defaultRule }
-        @currentScore = currentScore
+        @initialScore = initialScore
+        @currentScore = initialScore
+      end
+
+      def reset
+        @currentScore = @initialScore
       end
 
       def applyRule(path, difference, severity = 100)
