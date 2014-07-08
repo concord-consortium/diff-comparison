@@ -6,38 +6,38 @@ Rubric = Diff::Comparison::Rubric
 describe Diff::Comparison::Rubric do
   it 'should have a default rule, if none are specified, which applies to all paths' do
     r = Rubric.new
-    r.applyRule([], :added)
+    r.applyRule({ :path => [], :difference => :added })
     expect(r.currentScore).to eq(1)
-    r.applyRule([:foo, :bar], :changed, 49)
+    r.applyRule({ :path => [:foo, :bar], :difference => :changed, :severity => 49 })
     expect(r.currentScore).to eq(2)
-    r.applyRule([:bar], :deleted)
+    r.applyRule({ :path => [:bar], :difference => :deleted })
     expect(r.currentScore).to eq(3)
-    r.applyRule([:some, :sub, :attr], :changed, 30)
+    r.applyRule({ :path => [:some, :sub, :attr], :difference => :changed, :severity => 30 })
     expect(r.currentScore).to eq(4)
   end
 
   it 'should allow the user to set the starting score' do
     r = Rubric.new(nil, 20)
-    r.applyRule([], :added)
+    r.applyRule({ :path => [], :difference => :added })
     expect(r.currentScore).to eq(21)
-    r.applyRule([:foo, :bar], :changed, 49)
+    r.applyRule({ :path => [:foo, :bar], :difference => :changed, :severity => 49 })
     expect(r.currentScore).to eq(22)
-    r.applyRule([:bar], :deleted)
+    r.applyRule({ :path => [:bar], :difference => :deleted })
     expect(r.currentScore).to eq(23)
-    r.applyRule([:some, :sub, :attr], :changed, 30)
+    r.applyRule({ :path => [:some, :sub, :attr], :difference => :changed, :severity => 30 })
     expect(r.currentScore).to eq(24)
   end
 
   it 'should allow the user to reset the current score to the starting score' do
     r = Rubric.new(nil, 20)
-    r.applyRule([], :added)
+    r.applyRule({ :path => [], :difference => :added })
     expect(r.currentScore).to eq(21)
-    r.applyRule([:foo, :bar], :changed, 49)
+    r.applyRule({ :path => [:foo, :bar], :difference => :changed, :severity => 49 })
     expect(r.currentScore).to eq(22)
-    r.applyRule([:bar], :deleted)
+    r.applyRule({ :path => [:bar], :difference => :deleted })
     expect(r.currentScore).to eq(23)
     r.reset
-    r.applyRule([:some, :sub, :attr], :changed, 30)
+    r.applyRule({ :path => [:some, :sub, :attr], :difference => :changed, :severity => 30 })
     expect(r.currentScore).to eq(21)
   end
 
@@ -51,11 +51,11 @@ describe Diff::Comparison::Rubric do
     })
 
     # same path as the rubric specifies
-    r.applyRule([:a], :added)
+    r.applyRule({ :path => [:a], :difference => :added })
     expect(r.currentScore).to eq(2)
-    r.applyRule([:b], :added)
+    r.applyRule({ :path => [:b], :difference => :added })
     expect(r.currentScore).to eq(5)
-    r.applyRule([:c, :ca], :deleted)
+    r.applyRule({ :path => [:c, :ca], :difference => :deleted })
     expect(r.currentScore).to eq(10)
   end
 
@@ -69,9 +69,9 @@ describe Diff::Comparison::Rubric do
     })
 
     # same path as the rubric specifies
-    r.applyRule([:b, :a], :added)
+    r.applyRule({ :path => [:b, :a], :difference => :added })
     expect(r.currentScore).to eq(3)
-    r.applyRule([:c, :ca, :caa], :deleted)
+    r.applyRule({ :path => [:c, :ca, :caa], :difference => :deleted })
     expect(r.currentScore).to eq(8)
   end
 
@@ -87,11 +87,11 @@ describe Diff::Comparison::Rubric do
     })
 
     # same path as the rubric specifies
-    r.applyRule([:d, :da], :added)
+    r.applyRule({ :path => [:d, :da], :difference => :added })
     expect(r.currentScore).to eq(1)
-    r.applyRule([:e, :da, :dc, :cda], :added)
+    r.applyRule({ :path => [:e, :da, :dc, :cda], :difference => :added })
     expect(r.currentScore).to eq(2)
-    r.applyRule([:c, :cb], :deleted)
+    r.applyRule({ :path => [:c, :cb], :difference => :deleted })
     expect(r.currentScore).to eq(4)
   end
 
@@ -107,7 +107,7 @@ describe Diff::Comparison::Rubric do
     }, 10)
 
     # same path as the rubric specifies
-    r.applyRule([:c, :cb], :deleted)
+    r.applyRule({ :path => [:c, :cb], :difference => :deleted })
     expect(r.currentScore).to eq(20)
   end
 
@@ -126,7 +126,7 @@ describe Diff::Comparison::Rubric do
     }, 20)
 
     # same path as the rubric specifies
-    r.applyRule([:c, :cb, :cbc], :deleted)
+    r.applyRule({ :path => [:c, :cb, :cbc], :difference => :deleted })
     expect(r.currentScore).to eq(40)
   end
 
@@ -143,9 +143,9 @@ describe Diff::Comparison::Rubric do
     }, 20)
 
     # same path as the rubric specifies
-    r.applyRule([:c, :cb, :cbc], :deleted)
+    r.applyRule({ :path => [:c, :cb, :cbc], :difference => :deleted })
     expect(r.currentScore).to eq(20)
-    r.applyRule([:d, :cb, :cbc], :deleted)
+    r.applyRule({ :path => [:d, :cb, :cbc], :difference => :deleted })
     expect(r.currentScore).to eq(20)
   end
 end

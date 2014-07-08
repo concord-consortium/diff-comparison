@@ -30,9 +30,16 @@ module Diff
         @currentScore = @initialScore
       end
 
-      def applyRule(path, difference, severity = 100)
+      def applyRule(params)
+        raise "path required!" unless path = params.delete(:path)
+        raise "difference required!" unless params[:difference]
+
+        defaults = { :severity => 100 }
+        opts = defaults.merge(params)
+        opts[:currentScore] = @currentScore
+
         rule = findRule(path)
-        @currentScore = rule.applyRule({:currentScore => @currentScore, :difference => difference, :severity => severity}) if rule
+        @currentScore = rule.applyRule(opts) if rule
       end
 
       private

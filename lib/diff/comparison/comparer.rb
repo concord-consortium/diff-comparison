@@ -22,7 +22,7 @@ module Diff
       def score(rubric)
         rubric.reset
         flat_differences.each do |path,result|
-          rubric.applyRule(path, result[:difference], result[:severity])
+          rubric.applyRule({:path => path, :difference => result[:difference], :severity => result[:severity]})
         end
         return rubric.currentScore
       end
