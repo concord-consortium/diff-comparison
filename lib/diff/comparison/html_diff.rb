@@ -11,8 +11,8 @@ class Diff::Comparison::HtmlDiff
 
   # Split changes among 2 streams so that sources can be easily compared
   def initialize(left_output = "", right_output = "", options = {})
-    @left_output = left_output || ""
-    @right_output = right_output || ""
+    @left_output = left_output
+    @right_output = right_output
 
     @match_class  = options[:match_class]  || "match"
     @only_a_class = options[:only_a_class] || "only_a"

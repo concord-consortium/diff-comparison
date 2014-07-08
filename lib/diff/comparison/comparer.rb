@@ -53,6 +53,31 @@ module Diff
         end
       end
 
+      def html(left, right, output_both = false)
+        hd = HtmlDiff.new
+        hd.right_output = nil unless output_both
+
+        a = [left]
+        b = [right]
+
+        if (left.is_a?(String) && right.is_a?(String)) ||
+           (left.is_a?(String) && right.nil?) ||
+           (right.is_a?(String) && left.nil?)
+          # compare the strings
+          # symbol diff returns a string of +-=* which represent whether the "word" was added, deleted, the same, or changed.
+
+          a = CGI.escapeHTML(left || "").gsub(/(\s)/) {|s| "#{s} "}.split(/ /)
+          a.delete("")
+          b = CGI.escapeHTML(right || "").gsub(/(\s)/) {|s| "#{s} "}.split(/ /)
+          b.delete("")
+        end
+
+        Diff::LCS.traverse_balanced(a, b, hd)
+
+        # return the left and right html
+        return [hd.left_output, hd.right_output]
+      end
+
       private
 
       def process
