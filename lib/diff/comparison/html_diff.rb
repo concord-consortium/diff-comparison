@@ -48,7 +48,7 @@ class Diff::Comparison::HtmlDiff
       @left_output  << htmlize("#{event.old_element}", :change_class)
       @right_output << htmlize("#{event.new_element}", :change_class)
     else
-      @left_output  << htmlize("#{event.new_element}", :change_class)
+      @left_output  << htmlize("#{event.old_element}", :change_class)
     end
   end
 
