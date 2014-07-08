@@ -9,19 +9,19 @@ module Diff
         @right = flatten(right)
       end
 
-      def differences
-        process
+      def differences(opts = {})
+        process(opts)
         return unflatten(@differences)
       end
 
-      def flat_differences
-        process
+      def flat_differences(opts = {})
+        process(opts)
         return @differences
       end
 
-      def score(rubric)
+      def score(rubric, opts = {})
         rubric.reset
-        flat_differences.each do |path,result|
+        flat_differences(opts).each do |path,result|
           rubric.applyRule({:path => path, :difference => result[:difference], :severity => result[:severity]})
         end
         return rubric.currentScore
@@ -80,7 +80,7 @@ module Diff
 
       private
 
-      def process
+      def process(opts = {})
         return if @processed
 
         only_left = @left.keys - @right.keys
@@ -90,16 +90,36 @@ module Diff
         @differences = {}
         only_left.each do |k|
           @differences[k] = {:difference => :added, :severity => severity(@left[k], nil)}
+          @differences[k].merge! _generateHtml(@left[k], nil, opts)
         end
         only_right.each do |k|
           @differences[k] = {:difference => :deleted, :severity => severity(nil, @right[k])}
+          @differences[k].merge! _generateHtml(nil, @right[k], opts)
         end
         both.each do |k|
           s = severity(@left[k], @right[k])
-          @differences[k] = {:difference => :changed, :severity => s} unless s == 0
+          unless s == 0
+            @differences[k] = {:difference => :changed, :severity => s}
+            @differences[k].merge! _generateHtml(@left[k], @right[k], opts)
+          end
         end
 
         @processed = true
+      end
+
+      def _generateHtml(left, right, opts)
+        ret = {}
+        ignore = nil
+
+        if opts[:html_left] && opts[:html_right]
+          ret[:html_left], ret[:html_right] = html(left, right, true)
+        elsif opts[:html_left]
+          ret[:html_left], ignore = html(left, right, false)
+        else
+          ret[:html_right], ignore = html(right, left, false)
+        end
+
+        return ret
       end
 
       def flatten(h, f=[], g={})

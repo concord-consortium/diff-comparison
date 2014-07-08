@@ -9,6 +9,26 @@ describe Diff::Comparison::Comparer do
       comparer = Diff::Comparison::Comparer.new(left, right)
       expect(comparer.score(rubric)).to eq(6)
     end
+
+    it 'should generate html differences between two hashes' do
+      rubric = Diff::Comparison::Rubric.new
+      left = { :a => 5, :b => true, :c => { :ca => "foo bar", :cb => "baz" }, :e => "This is a sentence about dogs."}
+      right = { :a => 6, :b => true, :d => { :da => "foos ball", :db => "baseball" }, :e => "This is not a sentence about cats."}
+      comparer = Diff::Comparison::Comparer.new(left, right)
+      expect(comparer.score(rubric, {:html_left => true, :html_right => true})).to eq(6)
+      expect(comparer.differences).to eq({
+        :a => {:difference => :changed, :severity => 100, :html_left => '<span class="change">5</span> ', :html_right => '<span class="change">6</span> '},
+        :c => {
+          :ca => {:difference => :added, :severity => 100, :html_left => '<span class="only_a">foo</span> <span class="only_a">bar</span> ', :html_right => ''},
+          :cb => {:difference => :added, :severity => 100, :html_left => '<span class="only_a">baz</span> ', :html_right => ''}
+        },
+        :d => {
+          :da => {:difference => :deleted, :severity => 100, :html_left => '', :html_right => '<span class="only_b">foos</span> <span class="only_b">ball</span> '},
+          :db => {:difference => :deleted, :severity => 100, :html_left => '', :html_right => '<span class="only_b">baseball</span> '}
+        },
+        :e => {:difference => :changed, :severity => 29, :html_left => '<span class="match">This</span> <span class="match">is</span> <span class="match">a</span> <span class="match">sentence</span> <span class="match">about</span> <span class="change">dogs.</span> ', :html_right => '<span class="match">This</span> <span class="match">is</span> <span class="only_b">not</span> <span class="match">a</span> <span class="match">sentence</span> <span class="match">about</span> <span class="change">cats.</span> '},
+      })
+    end
   end
 
   describe 'severity' do
