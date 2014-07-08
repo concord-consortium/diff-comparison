@@ -32,7 +32,7 @@ module Diff
 
       def applyRule(path, difference, severity = 100)
         rule = findRule(path)
-        @currentScore = rule.applyRule(@currentScore, difference, severity) if rule
+        @currentScore = rule.applyRule({:currentScore => @currentScore, :difference => difference, :severity => severity}) if rule
       end
 
       private
