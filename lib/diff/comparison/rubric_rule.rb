@@ -17,7 +17,10 @@ module Diff
 
       def applyRule(currentScore, difference, severity = 100)
         if m = (@matchers[difference] || @matchers[:__default__])
-          return m.call currentScore, severity
+          numArgsExpected = m.arity.abs
+          args = [currentScore, severity].slice(0,numArgsExpected)
+          args.fill(nil, args.length...numArgsExpected) if numArgsExpected > args.length
+          return m.call(*args)
         end
         return currentScore
       end
