@@ -7,7 +7,6 @@ describe Diff::Comparison::Comparer do
       left = { :a => 5, :b => true, :c => { :ca => "foo bar", :cb => "baz" }, :e => "This is a sentence about dogs."}
       right = { :a => 6, :b => true, :d => { :da => "foos ball", :db => "baseball" }, :e => "This is not a sentence about cats."}
       comparer = Diff::Comparison::Comparer.new(left, right)
-      puts "Diffs: #{comparer.differences.inspect}"
       expect(comparer.score(rubric)).to eq(6)
     end
   end
